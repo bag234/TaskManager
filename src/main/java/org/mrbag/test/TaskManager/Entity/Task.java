@@ -4,8 +4,10 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.mrbag.test.TaskManager.Entity.Duty.TaskJsonDeserelizator;
 import org.mrbag.test.TaskManager.Entity.Duty.UserSimpleJsonSerilizator;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import jakarta.persistence.CascadeType;
@@ -31,6 +33,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonDeserialize(using = TaskJsonDeserelizator.class)
 public class Task {
 
 	@Id

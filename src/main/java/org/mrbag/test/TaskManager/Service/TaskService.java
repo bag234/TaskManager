@@ -17,17 +17,22 @@ import jakarta.transaction.Transactional;
 @Service
 public class TaskService {
 
-	@Autowired
 	TaskRep tasks;
 	
+	@Autowired
+	public void setTasks(TaskRep tasks) {
+		this.tasks = tasks;
+	}
+	
 	public Task newTask(Task t) {
-		if (t.getAuthor() == null || t.getTitle() == null || t.getTitle().isEmpty())
+		if (t == null ||t.getAuthor() == null || t.getTitle() == null || t.getTitle().isEmpty())
 				return null;
 		
 		return tasks.save(t);
 	}
 	
 	public Task getTask(Long id, User usr) {
+		if (usr != null) return null;
 		return tasks.findOnebyIdAnUser(id, usr, usr.getRole() == UserRole.ADMIN);
 	}
 	
