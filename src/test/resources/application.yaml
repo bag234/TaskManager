@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: test-TaskManager
+  datasource:
+    url: jdbc:h2:file:./testdb
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create #update table
+
+app:
+  jwt: 53A73E5F1C4E0A2D3B5C2D784E6A1B423D6F247D1F6E5C3A596D635A75327855
+  exp: 864000
