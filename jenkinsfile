@@ -27,7 +27,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh """
-                  docker build \
+                  sudo docker build \
                     --build-arg JAR_FILE=target/*.jar \
                     -t $IMAGE_NAME:latest .
                 """
