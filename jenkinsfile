@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "task-manager"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/bag234/TaskManager.git'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh './mvnw test'
+            }
+        }
+
+        stage('Build JAR') {
+            steps {
+                sh './mvnw clean package -DskipTests'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh """
+                  docker build \
+                    --build-arg JAR_FILE=target/*.jar \
+                    -t $IMAGE_NAME:latest .
+                """
+            }
+        }
+
+        stage('Run with Docker Compose') {
+            steps {
+                sh """
+                  docker-compose down -v || true
+                  docker-compose up -d --build
+                """
+            }
+        }
+    }
+}

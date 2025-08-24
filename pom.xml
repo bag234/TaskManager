@@ -48,18 +48,17 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
-<dependency>
-    <groupId>io.swagger.core.v3</groupId>
-    <artifactId>swagger-annotations</artifactId>
-    <version>2.2.30</version>
-</dependency>
-<dependency>
-    <groupId>org.springdoc</groupId>
-    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-    <version>2.5.0</version>
-</dependency>
-
-
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>2.2.30</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.5.0</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -116,10 +115,10 @@
 					</execution>
 				</executions>
 				<configuration>
-   <apiDocsUrl>http://localhost:8080/api-docs.yaml</apiDocsUrl>
-   <outputFileName>openapi.yaml</outputFileName>
-   <outputDir>${project.build.directory}/..</outputDir>
- </configuration>
+					<apiDocsUrl>http://localhost:8080/api-docs.yaml</apiDocsUrl>
+					<outputFileName>openapi.yaml</outputFileName>
+					<outputDir>${project.build.directory}/..</outputDir>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -137,24 +136,24 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<executions>
-    <execution>
-      <id>pre-integration-test</id>
-      <goals>
-        <goal>start</goal>
-      </goals>
-      <configuration>
-        <arguments>
-          <argument>--spring.profiles.active=doc</argument>
-        </arguments>
-      </configuration>
-    </execution>
-    <execution>
-      <id>post-integration-test</id>
-      <goals>
-        <goal>stop</goal>
-      </goals>
-    </execution>
-  </executions>
+					<execution>
+						<id>pre-integration-test</id>
+						<goals>
+							<goal>start</goal>
+						</goals>
+						<configuration>
+							<arguments>
+								<argument>--spring.profiles.active=doc</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>post-integration-test</id>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
 				<configuration>
 					<excludes>
 						<exclude>
