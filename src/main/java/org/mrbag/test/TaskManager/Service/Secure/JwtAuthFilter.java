@@ -21,7 +21,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 	
 	private static final String PREFIX = "Bearer ";
 	
-	@Autowired //TODO Fix name
+	@Autowired
 	AuthifacationService service;
 	
 	@Override

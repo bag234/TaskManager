@@ -1,5 +1,6 @@
 package org.mrbag.test.TaskManager;
 
+import org.mrbag.test.TaskManager.Entity.UserRole;
 import org.mrbag.test.TaskManager.Service.Secure.JwtAuthFilter;
 import org.mrbag.test.TaskManager.Service.Secure.UserConvertDetalisServer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +35,14 @@ public class SecurutyCfg {
 			.cors(c -> c.disable())
 			.headers(h -> h.frameOptions(f -> f.disable())) //h2-panel 
 			.authorizeHttpRequests(t -> t
-				.requestMatchers("/api/auth/**", "/h2/**", "/h2").permitAll()
-				.anyRequest().authenticated()
+				.requestMatchers("/api/auth/**").permitAll()
+				.requestMatchers("/api-docs", "/api-docs.yaml").permitAll() //swager acces api doc
+				.requestMatchers("/error").permitAll()
+				.requestMatchers("/api/user/me").authenticated()
+				.requestMatchers("/api/user/**").hasRole(UserRole.ADMIN.name())
+				.requestMatchers("/h2/**", "/h2").permitAll() //h2-panel
+				.anyRequest().permitAll()
+//				.authenticated()
 					)
 			.sessionManagement(t -> t.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authenticationProvider(getAuthProvider())

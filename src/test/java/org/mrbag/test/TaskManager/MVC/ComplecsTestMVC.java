@@ -99,7 +99,7 @@ public class ComplecsTestMVC {
 		
 		t1 = mapper.readValue(
 				mvc.perform(get("/api/tasks/" + ts1.getId()).header("Authorization", "Bearer " + jwt1).contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().is(201)).andReturn().getResponse().getContentAsString(), 
+				.andExpect(status().is(200)).andReturn().getResponse().getContentAsString(), 
 				Task.class);
 		
 		mvc.perform(get("/api/tasks/" + ts2.getId()).header("Authorization", "Bearer " + jwt1).contentType(MediaType.APPLICATION_JSON))
@@ -107,19 +107,19 @@ public class ComplecsTestMVC {
 		
 		mapper.readValue(
 				mvc.perform(get("/api/tasks/" + ts1.getId()).header("Authorization", "Bearer " + jwt1).contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().is(201)).andReturn().getResponse().getContentAsString(), 
+				.andExpect(status().is(200)).andReturn().getResponse().getContentAsString(), 
 				Task.class);
 		
 		mvc.perform(put("/api/tasks/" + ts1.getId()).content(mapper.writeValueAsString(t2)).header("Authorization", "Bearer " + jwt1).contentType(MediaType.APPLICATION_JSON))
-		.andExpect(status().is(200));
+		.andExpect(status().is(202));
 		
 		t1 = mapper.readValue(
 				mvc.perform(get("/api/tasks/" + ts1.getId()).header("Authorization", "Bearer " + jwt1).contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().is(201)).andReturn().getResponse().getContentAsString(), 
+				.andExpect(status().is(200)).andReturn().getResponse().getContentAsString(), 
 				Task.class);
 		assertTrue(equlasTask(t1, t2), "Task1 not equlas");
 		mvc.perform(delete("/api/tasks/" + ts1.getId()).header("Authorization", "Bearer " + jwt1).contentType(MediaType.APPLICATION_JSON))
-		.andExpect(status().is(200));
+		.andExpect(status().is(202));
 		
 		mvc.perform(get("/api/tasks/" + ts1.getId()).header("Authorization", "Bearer " + jwt1).contentType(MediaType.APPLICATION_JSON))
 		.andExpect(status().is(400));

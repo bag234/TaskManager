@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "app.jwt",
+    "type": "java.lang.String",
+    "description": "Key for dignature jwt token"
+  },
+  {
+    "name": "app.exp",
+    "type": "java.lang.Long",
+    "description": "Time in miles how much valid token"
+  }
+]}

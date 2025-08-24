@@ -1,0 +1,452 @@
+openapi: 3.0.1
+info:
+  title: RESTful-сервис для управления задачами
+  description: Простой сервис управления задач со ограничением доступом при помощи
+    jwt токенов
+  version: "1.0"
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+tags:
+- name: ADMIN
+  description: Административные методы
+- name: Сервисный API
+  description: Вспомогательные эндпоинты для фронтенда
+- name: ALL
+  description: ' Get-методы для пользователей'
+paths:
+  /api/tasks/{id}:
+    get:
+      tags:
+      - task-controller
+      operationId: getTask
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Возращает экземпляр задачи из базы данных по ID
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Задача"
+        "400":
+          description: Если задачи с данном ID нет в базе данных
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Задача"
+    put:
+      tags:
+      - task-controller
+      operationId: updateTask
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskDTO"
+        required: true
+      responses:
+        "202":
+          description: Возращает экземпляр обновленной задачи в базе данных
+          content:
+            '*/*':
+              schema:
+                type: object
+        "400":
+          description: Если данны для обновления не корректны
+          content:
+            '*/*':
+              schema:
+                type: object
+    delete:
+      tags:
+      - task-controller
+      operationId: delTask
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "400":
+          description: Если задачи с данном ID нет в базе данных
+          content:
+            '*/*':
+              schema:
+                type: object
+        "202":
+          description: Удаляет задачу из базы данных по ID
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/tasks:
+    get:
+      tags:
+      - task-controller
+      operationId: getListTasks
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - TODO
+            - IN_PROGRESS
+            - DONE
+      - name: priority
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - LOW
+            - MEDIUM
+            - HIGH
+      - name: assigne
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+            format: int64
+      - name: author
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Возращает экземпляры задач из базы данных согласно филтеров
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Задача"
+    post:
+      tags:
+      - task-controller
+      operationId: createTask
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskDTO"
+        required: true
+      responses:
+        "400":
+          description: Если данны для сохранения не корректны
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Задача"
+        "201":
+          description: Возращает экземпляр сохраненой задаче в базе данных
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Задача"
+  /api/auth/register:
+    post:
+      tags:
+      - auth-controller
+      operationId: registerNewUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserInfoDTO"
+        required: true
+      responses:
+        "200":
+          description: Возращает успех регистрации нового пользоваетля
+          content:
+            '*/*':
+              schema:
+                type: boolean
+  /api/auth/login:
+    post:
+      tags:
+      - auth-controller
+      operationId: loginUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequstDTO"
+        required: true
+      responses:
+        "405":
+          description: Если пользователя нет в базе данных
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/JWTResponseDTO"
+        "200":
+          description: Возращает jwt токен для авториазации
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/JWTResponseDTO"
+  /api/user:
+    get:
+      tags:
+      - ADMIN
+      operationId: getAllUser
+      responses:
+        "200":
+          description: Возвращает список пользователей
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Пользователь сервиса"
+  /api/user/{id}:
+    get:
+      tags:
+      - ADMIN
+      operationId: getUserById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Получает экземпляр пользователя по ID
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Пользователь сервиса"
+    delete:
+      tags:
+      - ADMIN
+      operationId: deleteUserById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Удалят экземпляр пользователя по ID
+          content:
+            '*/*':
+              schema:
+                type: boolean
+  /api/user/me:
+    get:
+      tags:
+      - ALL
+      operationId: getMe
+      responses:
+        "200":
+          description: Возвращает экземпляр пользователя сохраненного в контексте
+            приложения
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Пользователь сервиса"
+  /api/service/status:
+    get:
+      tags:
+      - Сервисный API
+      summary: Получить список возможных статусов задачи
+      description: Возвращает массив всех значений перечисления TaskStatus
+      operationId: getAllPosibleStatus
+      responses:
+        "200":
+          description: Список статусов успешно получен
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: string
+                  enum:
+                  - TODO
+                  - IN_PROGRESS
+                  - DONE
+  /api/service/priority:
+    get:
+      tags:
+      - Сервисный API
+      summary: Получить список возможных приоритетов задачи
+      description: Возвращает массив всех значений перечисления TaskPriority
+      operationId: getAllPosiblePriority
+      responses:
+        "200":
+          description: Список приоритетов успешно получен
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: string
+                  enum:
+                  - LOW
+                  - MEDIUM
+                  - HIGH
+components:
+  schemas:
+    TaskDTO:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+          - TODO
+          - IN_PROGRESS
+          - DONE
+        priority:
+          type: string
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+        assigner:
+          type: integer
+          format: int64
+    Задача:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+          description: Заголовок задачи
+          example: Реализовать аутентификацию
+        description:
+          type: string
+          description: Описание задачи
+          example: Нужно подключить JWT и настроить фильтры безопасности
+        status:
+          type: string
+          description: Статус задачи
+          example: TODO
+          enum:
+          - TODO
+          - IN_PROGRESS
+          - DONE
+        priority:
+          type: string
+          description: Приоритет задачи
+          example: HIGH
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+        author:
+          type: integer
+          description: Автор задачи (id пользователя)
+          format: int64
+          example: 42
+        assigner:
+          type: integer
+          description: Назначенный исполнитель (id пользователя)
+          format: int64
+          example: 77
+        createdAt:
+          type: string
+          description: Дата создания
+          format: date-time
+        updateAt:
+          type: string
+          description: Дата обновления
+          format: date-time
+    UserInfoDTO:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+    LoginRequstDTO:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      description: Обертка для данных для авториазции
+    JWTResponseDTO:
+      type: object
+      properties:
+        token:
+          type: string
+      description: Экземпля обертки для jwt токена
+    GrantedAuthority:
+      type: object
+      properties:
+        authority:
+          type: string
+    Пользователь сервиса:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Уникальный идентификатор пользователя
+          format: int64
+          example: 123
+        username:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: Логин пользователя
+          example: ivan
+        email:
+          type: string
+          description: Email пользователя (Уникальный)
+          example: ivan@example.com
+        role:
+          type: string
+          description: Роль пользователя в системе
+          example: USER
+          enum:
+          - USER
+          - ADMIN
+        authorities:
+          type: array
+          items:
+            $ref: "#/components/schemas/GrantedAuthority"
+        enabled:
+          type: boolean
+        accountNonLocked:
+          type: boolean
+        credentialsNonExpired:
+          type: boolean
+        accountNonExpired:
+          type: boolean

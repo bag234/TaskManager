@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -21,6 +24,7 @@ public class AuthController {
 	UserService users;
 	
 	@PostMapping("/register")
+	@ApiResponse(responseCode = "200", description = "Возращает успех регистрации нового пользоваетля")
 	public ResponseEntity<Boolean> registerNewUser(
 			@RequestBody UserInfoDTO user
 			){
@@ -28,6 +32,10 @@ public class AuthController {
 	}
 	
 	@PostMapping("/login")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "Возращает jwt токен для авториазации"),
+		@ApiResponse(responseCode = "405", description = "Если пользователя нет в базе данных")
+	})
 	public ResponseEntity<JWTResponseDTO> loginUser(
 			@RequestBody LoginRequstDTO user
 			){
@@ -40,11 +48,13 @@ public class AuthController {
 	
 	@AllArgsConstructor
 	@Getter
+	@Schema(description = "Экземпля обертки для jwt токена")
 	static public class JWTResponseDTO{
 		String token;
 	}
 	
 	@Data
+	@Schema(description = "Обертка для данных для авториазции")
 	static public class LoginRequstDTO{
 		String email;
 		String password;

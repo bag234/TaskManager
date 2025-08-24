@@ -23,16 +23,6 @@ public interface TaskRep extends JpaRepository<Task, Long> {
 			@Param("root") boolean canRoot
 			);
 	
-	/*
-	 * UPDATE User u SET " +
-       "u.name = COALESCE(:name, u.name), " +
-       "u.email = COALESCE(:email, u.email), " +
-       "u.age = COALESCE(:age, u.age) " +
-       "WHERE u.id = :id
-       u.age = CASE WHEN :age IS NOT NULL THEN :age ELSE u.age END 
-	 * 
-	 */
-	
 	@Modifying
 	@Query("UPDATE Task t SET "
 			+ "t.title = COALESCE(:#{#nt.title}, t.title), "

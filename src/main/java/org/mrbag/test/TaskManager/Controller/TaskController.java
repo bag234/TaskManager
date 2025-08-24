@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskController {
@@ -32,6 +35,10 @@ public class TaskController {
 	UserService service;
 	
 	@PostMapping("")
+	@ApiResponses({
+		@ApiResponse(responseCode = "201", description = "Возращает экземпляр сохраненой задаче в базе данных"),
+		@ApiResponse(responseCode = "400", description = "Если данны для сохранения не корректны")
+	})
 	public ResponseEntity<Task> createTask(
 			@RequestBody TaskDTO newTask
 			) {
@@ -42,16 +49,23 @@ public class TaskController {
 	}
 	
 	@GetMapping("/{id}")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "Возращает экземпляр задачи из базы данных по ID"),
+		@ApiResponse(responseCode = "400", description = "Если задачи с данном ID нет в базе данных")
+	})
 	public ResponseEntity<Task> getTask(
 			@PathVariable(name = "id") String id
 			){
 		Task t = tasks.getTask(Long.parseLong(id), service.getMe());
 		if (t == null)
 			return ResponseEntity.status(400).build();
-		return ResponseEntity.status(201).body(t);
+		return ResponseEntity.status(200).body(t);
 	}
 	
 	@GetMapping 
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "Возращает экземпляры задач из базы данных согласно филтеров"),
+	})
 	public ResponseEntity<Collection<Task>> getListTasks(
 			@RequestParam(name = "status", required = false) List<TaskStatus> status, 
 			@RequestParam(name = "priority", required = false) List<TaskPriority> prioryti,
@@ -63,6 +77,10 @@ public class TaskController {
 	}
 	
 	@PutMapping("/{id}")
+	@ApiResponses({
+		@ApiResponse(responseCode = "202", description = "Возращает экземпляр обновленной задачи в базе данных"),
+		@ApiResponse(responseCode = "400", description = "Если данны для обновления не корректны")
+	})
 	public ResponseEntity<?> updateTask(
 			@PathVariable(name = "id") String id,
 			@RequestBody TaskDTO newTask
@@ -71,16 +89,20 @@ public class TaskController {
 		t.setId(Long.parseLong(id));
 		
 		if (tasks.updateTask(t))
-			return ResponseEntity.status(200).build();
+			return ResponseEntity.status(202).build();
 		return ResponseEntity.status(400).build();
 	}
 	
 	@DeleteMapping("/{id}")
+	@ApiResponses({
+		@ApiResponse(responseCode = "202", description = "Удаляет задачу из базы данных по ID"),
+		@ApiResponse(responseCode = "400", description = "Если задачи с данном ID нет в базе данных")
+	})
 	public ResponseEntity<?> delTask(
 			@PathVariable(name = "id") String id
 			){
 		if (tasks.deleteTask(Long.parseLong(id), service.getMe()))
-			return  ResponseEntity.status(200).build();
+			return  ResponseEntity.status(202).build();
 		return ResponseEntity.status(400).build();
 	}
 	
