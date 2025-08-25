@@ -41,11 +41,10 @@ public class SecurutyCfg {
 				.requestMatchers("/api/user/me").authenticated()
 				.requestMatchers("/api/user/**").hasRole(UserRole.ADMIN.name())
 				.requestMatchers("/h2/**", "/h2").permitAll() //h2-panel
-				.anyRequest().permitAll()
-//				.authenticated()
+				.anyRequest().authenticated()
 					)
 			.sessionManagement(t -> t.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.authenticationProvider(getAuthProvider())
+			.authenticationProvider(getAuthProvider()	)
 			.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
 		
 		return http.build();
