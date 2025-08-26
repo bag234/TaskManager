@@ -18,25 +18,23 @@ import io.jsonwebtoken.security.Keys;
 public class JWTService {
 
 	private final long expiration;
-	
+
 	private final SecretKey key;
-	
+
 	public JWTService(
-			@Value("${app.exp}") long expiration, 
-			@Value("${app.jwt}") String jwtKey
-			) {
+			@Value("${app.exp}") long expiration,
+			@Value("${app.jwt}") String jwtKey) {
 		this.expiration = expiration;
 		this.key = Keys.hmacShaKeyFor(jwtKey.getBytes());
 	}
-	
+
 	private static Map<String, Object> getClaims(User user){
 		return Map.of(
 				"Username", user.getUsername(),
 				"Role", user.getRole().name(),
-				"Password", "OFF"
 				);
 	}
-	
+
 	public String generateTokenForUser(User user) {
 		return Jwts.builder()
 				.claims(getClaims(user))
@@ -46,44 +44,39 @@ public class JWTService {
 				.signWith(key)
 				.compact();
 	}
-	
+
 	private Claims getClaims(String token) {
 		return (Claims) Jwts.parser().verifyWith(key).build().parse(token).getPayload();
 	}
-	
+
 	public boolean isValid(String token) {
-		if (token == null || token.isEmpty()) return false;
+		if (token == null || token.isEmpty())
+			return false;
 		try {
 			return getClaims(token).getExpiration().after(new Date());
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			return false;
 		}
 	}
-	
+
 	public String getEmailUserByToken(String token) {
 		return getClaims(token).getSubject();
 	}
-	
+
 	public UserRole getUserRoleByToken(String token) {
 		return UserRole.valueOf((String) getClaims(token).get("Role"));
 	}
-	
-	@Deprecated
-	public String getPasswordByToken(String token) {
-		return (String) getClaims(token).get("Password");
-	}
-	
+
 	public User getUserByToken(String token) {
 		Claims c = getClaims(token);
-		
+
 		return User.builder().email(c.getSubject())
-							 .role(UserRole.valueOf((String)c.get("Role")))
-							 .build();
+				.role(UserRole.valueOf((String) c.get("Role")))
+				.build();
 	}
-	
+
 	public String getUsernameyToken(String token) {
 		return (String) getClaims(token).get("Username");
 	}
-	
+
 }
