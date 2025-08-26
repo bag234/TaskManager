@@ -22,7 +22,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 	private static final String PREFIX = "Bearer ";
 	
 	@Autowired
-	AuthifacationService service;
+	AuthenticationService service;
 	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -36,10 +36,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 		
 		UsernamePasswordAuthenticationToken auth = (UsernamePasswordAuthenticationToken) service.singInWithToken(auth_header.replace(PREFIX, ""));
 		
-		auth.setDetails(new WebAuthenticationDetails(request));
-		SecurityContextHolder.getContext().setAuthentication(auth);
-		filterChain.doFilter(request, response);
+		if (auth != null) {
+			auth.setDetails(new WebAuthenticationDetails(request));
+			SecurityContextHolder.getContext().setAuthentication(auth);
+		}
 		
+		filterChain.doFilter(request, response);
 	}
 
 }

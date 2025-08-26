@@ -3,7 +3,6 @@ package org.mrbag.test.TaskManager.Service.Secure;
 import java.util.List;
 
 import org.mrbag.test.TaskManager.Entity.User;
-import org.mrbag.test.TaskManager.Repository.UserRep;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,15 +10,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuntifacationService {
-	// https://habr.com/ru/articles/784508/ https://habr.com/ru/articles/938518/
+/**
+ * Simple Service jwt signature verification user and expiration time
+ */
+public class AuthenticationService {
+	
 	@Autowired
 	JWTService jws;
-	
-	@Autowired
-	UserRep users;
-	
-	
 	
 	public Authentication singInWithToken(String token) {
 		if (!jws.isValid(token)) return null;
@@ -33,6 +30,5 @@ public class AuntifacationService {
 				List.of(
 						new SimpleGrantedAuthority(usr.getRole().name())
 						));
-		
 	}
 }

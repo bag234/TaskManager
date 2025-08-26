@@ -1,6 +1,7 @@
 package org.mrbag.test.TaskManager.MVC;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -23,7 +24,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
-//@JsonTest
 @SpringBootTest
 @AutoConfigureMockMvc
 @Slf4j
@@ -126,7 +126,20 @@ public class ComplecsTestMVC {
 		
 	}
 	
-	
+	@Test
+	@DisplayName("Testing security token auth and baerer")
+	public void testSecurity() throws Exception {
+		mvc.perform(get("/api/user/me").header("Authorization", "Bearer " + jwt1).contentType(MediaType.APPLICATION_JSON))
+		.andExpect(status().isOk());
+		mvc.perform(get("/api/user/me").header("Authorization", "Bearer " + jwt2).contentType(MediaType.APPLICATION_JSON))
+		.andExpect(status().isOk());
+		
+		mvc.perform(get("/api/user/me").header("Authorization", "Bearer Wrong-TOKEN-test").contentType(MediaType.APPLICATION_JSON))
+		.andExpect(status().is(403));
+		
+		mvc.perform(get("/api/user/me").contentType(MediaType.APPLICATION_JSON))
+		.andExpect(status().is(403));
+	}
 	
 	private static boolean equlasTask(Task t1, Task t2) {
 		return t1.getTitle().equals(t2.getTitle()) &&
