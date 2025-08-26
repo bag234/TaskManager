@@ -23,6 +23,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -40,11 +41,11 @@ public class Task {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	
 	long id;
 	
 	@Column(nullable = false)
 	@Schema(description = "Заголовок задачи", example = "Реализовать аутентификацию")
+	@NotNull
 	String title;
 	
 	@Schema(description = "Описание задачи", example = "Нужно подключить JWT и настроить фильтры безопасности")

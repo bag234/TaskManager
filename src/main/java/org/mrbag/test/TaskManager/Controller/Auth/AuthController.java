@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -26,7 +29,7 @@ public class AuthController {
 	@PostMapping("/register")
 	@ApiResponse(responseCode = "200", description = "Возращает успех регистрации нового пользоваетля")
 	public ResponseEntity<Boolean> registerNewUser(
-			@RequestBody UserInfoDTO user
+			@RequestBody @Valid UserInfoDTO user
 			){
 		return ResponseEntity.ok(users.New(user.getUsername(), user.getEmail(), user.getPassword()));
 	}
@@ -37,7 +40,7 @@ public class AuthController {
 		@ApiResponse(responseCode = "405", description = "Если пользователя нет в базе данных")
 	})
 	public ResponseEntity<JWTResponseDTO> loginUser(
-			@RequestBody LoginRequstDTO user
+			@RequestBody @Valid LoginRequstDTO user
 			){
 		String token = users.authTokenWithPassword(user.getEmail(), user.getPassword());
 		if (token != null)
@@ -56,7 +59,10 @@ public class AuthController {
 	@Data
 	@Schema(description = "Обертка для данных для авториазции")
 	static public class LoginRequstDTO{
+		@NotNull
+		@Email
 		String email;
+		@NotNull
 		String password;
 	}
 }
