@@ -28,11 +28,10 @@ public class JWTService {
 		this.key = Keys.hmacShaKeyFor(jwtKey.getBytes());
 	}
 
-	private static Map<String, Object> getClaims(User user){
+	private static Map<String, Object> getClaims(User user) {
 		return Map.of(
 				"Username", user.getUsername(),
-				"Role", user.getRole().name(),
-				);
+				"Role", user.getRole().name());
 	}
 
 	public String generateTokenForUser(User user) {
